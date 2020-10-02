@@ -4,7 +4,7 @@ from homeassistant.components.hassio.handler import _api_bool, _api_data
 def extend_hassio(hassio):
     """Extend the hassio object to add some currently unavailable helper methods"""
     import types
-    
+
     hassio.get_supervisor_info = types.MethodType(get_supervisor_info, hassio)
     hassio.start_addon = types.MethodType(start_addon, hassio)
     hassio.stop_addon = types.MethodType(stop_addon, hassio)

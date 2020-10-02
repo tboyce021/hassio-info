@@ -1,7 +1,7 @@
 """
 Support for Hassio sensors.
 """
-import asyncio
+from datetime import timedelta
 import logging
 
 from homeassistant.components.hassio import DOMAIN as HASSIO_DOMAIN
@@ -22,17 +22,24 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+SCAN_INTERVAL = timedelta(seconds=10)
+PARALLEL_UPDATES = 1
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the platform."""
+
+async def async_setup_entry(hass, entry, async_add_entities):
+    """Set up Hassio Info sensor based on a config entry."""
     hassio = hass.data[HASSIO_DOMAIN]
 
     info = await hassio.get_supervisor_info()
     addons = info[ATTR_ADDONS]
 
+    sensors = []
     for addon in addons:
         for sensor_type in SENSOR_TYPES:
-            async_add_entities([AddonSensor(hassio, addon, sensor_type)], True)
+            sensors.append(AddonSensor(hassio, addon, sensor_type))
+
+    async_add_entities(sensors, True)
+
 
 class AddonSensor(Entity):
     """Representation of an Addon sensor."""

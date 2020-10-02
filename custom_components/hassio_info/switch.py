@@ -1,7 +1,7 @@
 """
 Support for Hassio switches.
 """
-import asyncio
+from datetime import timedelta
 import logging
 
 from homeassistant.components.hassio import DOMAIN as HASSIO_DOMAIN
@@ -21,16 +21,23 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+SCAN_INTERVAL = timedelta(seconds=10)
+PARALLEL_UPDATES = 1
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    """Set up the platform."""
+
+async def async_setup_entry(hass, entry, async_add_entities):
+    """Set up Hassio Info switch based on a config entry."""
     hassio = hass.data[HASSIO_DOMAIN]
 
     info = await hassio.get_supervisor_info()
     addons = info[ATTR_ADDONS]
 
+    switches = []
     for addon in addons:
-        async_add_entities([AddonSwitch(hassio, addon)], True)
+        switches.append(AddonSwitch(hassio, addon))
+
+    async_add_entities(switches, True)
+
 
 class AddonSwitch(SwitchEntity):
     """Representation of an Addon switch."""
