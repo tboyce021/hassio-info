@@ -1,21 +1,25 @@
 """
-Support for Hass.io switches.
+Support for Hassio switches.
 """
 import asyncio
 import logging
 
-import voluptuous as vol
-
+from homeassistant.components.hassio import DOMAIN as HASSIO_DOMAIN
+from homeassistant.components.hassio.const import (
+    ATTR_ADDONS,
+    ATTR_NAME,
+)
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
+from homeassistant.const import ATTR_STATE, STATE_UNAVAILABLE, STATE_UNKNOWN
 
-from . import DOMAIN as HASSIO_INFO_DOMAIN, HASSIO_DOMAIN
+from .const import (
+    ATTR_SLUG,
+    ICON,
+    STATE_NONE,
+    STATE_STARTED
+)
 
 _LOGGER = logging.getLogger(__name__)
-
-DEPENDENCIES = [HASSIO_INFO_DOMAIN]
-
-ICON = 'mdi:home-assistant'
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -23,7 +27,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     hassio = hass.data[HASSIO_DOMAIN]
 
     info = await hassio.get_supervisor_info()
-    addons = info['addons']
+    addons = info[ATTR_ADDONS]
 
     for addon in addons:
         async_add_entities([AddonSwitch(hassio, addon)], True)
@@ -33,8 +37,8 @@ class AddonSwitch(SwitchEntity):
 
     def __init__(self, hassio, addon):
         self._hassio = hassio
-        self._addon_slug = addon['slug']
-        self._name = '{}'.format(addon['name'])
+        self._addon_slug = addon[ATTR_SLUG]
+        self._name = addon[ATTR_NAME]
         self._state = STATE_UNKNOWN
 
     @property
@@ -50,12 +54,12 @@ class AddonSwitch(SwitchEntity):
     @property
     def is_on(self):
         """Return the boolean response if switch is on."""
-        return bool(self._state == 'started')
+        return bool(self._state == STATE_STARTED)
 
     @property
     def unique_id(self):
         """Return a unique ID for the device."""
-        return '{}'.format(self._addon_slug)
+        return self._addon_slug
 
     async def async_turn_on(self, **kwargs):
         """Turn the entity on."""
@@ -72,7 +76,7 @@ class AddonSwitch(SwitchEntity):
             return
 
         info = await self._hassio.get_addon_info(self._addon_slug)
-        if info['state'] is None or info['state'] == 'none':
+        if info[ATTR_STATE] is None or info[ATTR_STATE] == STATE_NONE:
             self._state = STATE_UNAVAILABLE
         else:
-            self._state = info['state']
+            self._state = info[ATTR_STATE]
