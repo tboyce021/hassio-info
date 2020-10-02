@@ -1,6 +1,7 @@
 """
 Support for Hass.io sensors.
 """
+import asyncio
 import logging
 
 import voluptuous as vol
@@ -8,7 +9,7 @@ import voluptuous as vol
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.helpers.entity import Entity
 
-from . import DEFAULT_NAME, DOMAIN as HASSIO_INFO_DOMAIN, HASSIO_DOMAIN
+from . import DOMAIN as HASSIO_INFO_DOMAIN, HASSIO_DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,11 +18,11 @@ DEPENDENCIES = [HASSIO_INFO_DOMAIN]
 ICON = 'mdi:home-assistant'
 
 SENSOR_VERSION = 'version'
-SENSOR_LAST_VERSION = 'last_version'
+SENSOR_VERSION_LATEST = 'version_latest'
 
 SENSOR_NAMES = {
     SENSOR_VERSION: 'Version',
-    SENSOR_LAST_VERSION: 'Last Version'
+    SENSOR_VERSION_LATEST: 'Latest Version'
 }
 
 
@@ -33,7 +34,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     addons = info['addons']
 
     for addon in addons:
-        for sensor_type in (SENSOR_VERSION, SENSOR_LAST_VERSION):
+        for sensor_type in (SENSOR_VERSION, SENSOR_VERSION_LATEST):
             async_add_entities([AddonSensor(hassio, addon, sensor_type)], True)
 
 class AddonSensor(Entity):
@@ -43,7 +44,7 @@ class AddonSensor(Entity):
         """Initialize the Addon sensor."""
         self._hassio = hassio
         self._addon_slug = addon['slug']
-        self._name = '{} {} {}'.format(DEFAULT_NAME, addon['name'], SENSOR_NAMES[sensor_type])
+        self._name = '{}: {}'.format(addon['name'], SENSOR_NAMES[sensor_type])
         self._sensor_type = sensor_type
         self._state = None
 

@@ -19,8 +19,6 @@ CONFIG_SCHEMA = vol.Schema({
     }),
 }, extra=vol.ALLOW_EXTRA)
 
-DEFAULT_NAME = 'Hass.io Addon'
-
 
 async def async_setup(hass, config):
     """Set up the Hass.io info component."""
