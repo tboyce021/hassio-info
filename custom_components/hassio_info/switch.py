@@ -1,14 +1,15 @@
 """
 Support for Hass.io switches.
 """
+import asyncio
 import logging
 
 import voluptuous as vol
 
-from homeassistant.components.switch import SwitchDevice
+from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 
-from . import DEFAULT_NAME, DOMAIN as HASSIO_INFO_DOMAIN, HASSIO_DOMAIN
+from . import DOMAIN as HASSIO_INFO_DOMAIN, HASSIO_DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,13 +28,13 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     for addon in addons:
         async_add_entities([AddonSwitch(hassio, addon)], True)
 
-class AddonSwitch(SwitchDevice):
+class AddonSwitch(SwitchEntity):
     """Representation of an Addon switch."""
 
     def __init__(self, hassio, addon):
         self._hassio = hassio
         self._addon_slug = addon['slug']
-        self._name = '{} {}'.format(DEFAULT_NAME, addon['name'])
+        self._name = '{}'.format(addon['name'])
         self._state = STATE_UNKNOWN
 
     @property
