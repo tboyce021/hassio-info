@@ -1,0 +1,13 @@
+{
+    "domain": "hassio_info",
+    "name": "Hassio Info",
+    "documentation": "https://github.com/tboyce021/hassio-info",
+    "issue_tracker": "https://github.com/tboyce021/hassio-info/issues",
+    "config_flow": false,
+    "requirements": [
+    ],
+    "dependencies": [],
+    "codeowners": [
+        "@tboyce021"
+    ]
+}
