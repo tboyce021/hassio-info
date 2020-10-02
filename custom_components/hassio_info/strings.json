@@ -1,0 +1,14 @@
+{
+  "config": {
+    "flow_title": "Hassio Info",
+	"step": {
+      "user": {
+        "title": "Confirm set up"
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]",
+	  "hassio_required": "The Hassio integration is not set up"
+    }
+  }
+}
