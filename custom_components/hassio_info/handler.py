@@ -1,5 +1,5 @@
 """Handler for Hassio Info."""
-from homeassistant.components.hassio.handler import _api_bool, _api_data
+from homeassistant.components.hassio.handler import _api_bool, api_data
 
 def extend_hassio(hassio):
     """Extend the hassio object to add some currently unavailable helper methods"""
@@ -9,7 +9,7 @@ def extend_hassio(hassio):
     hassio.start_addon = types.MethodType(start_addon, hassio)
     hassio.stop_addon = types.MethodType(stop_addon, hassio)
 
-@_api_data
+@api_data
 def get_supervisor_info(self):
     """Return data for Supervisor
 
