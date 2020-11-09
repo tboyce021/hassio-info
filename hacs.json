@@ -1,0 +1,10 @@
+{
+  "name": "Hassio Info",
+  "domains": [
+    "sensor",
+    "switch"
+  ],
+  "render_readme": true,
+  "homeassistant": "0.117.0",
+  "iot_class": ["Local Polling", "Local Push"]
+}
