@@ -5,12 +5,14 @@ from datetime import timedelta
 import logging
 
 from homeassistant.components.hassio import DOMAIN as HASSIO_DOMAIN
-from homeassistant.components.hassio.const import (
-    ATTR_ADDONS,
-    ATTR_NAME,
-)
+from homeassistant.components.hassio.const import ATTR_ADDONS
 from homeassistant.helpers.entity import Entity
-from homeassistant.const import ATTR_STATE, STATE_UNAVAILABLE, STATE_UNKNOWN
+from homeassistant.const import (
+    ATTR_NAME,
+    ATTR_STATE,
+    STATE_UNAVAILABLE,
+    STATE_UNKNOWN
+)
 
 from .const import (
     ATTR_SLUG,
