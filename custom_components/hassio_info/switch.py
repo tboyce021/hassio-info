@@ -72,11 +72,11 @@ class AddonSwitch(SwitchEntity):
 
     async def async_turn_on(self, **kwargs):
         """Turn the entity on."""
-        await self._hassio.start_addon(self._addon_slug)
+        await self._hassio.send_command("/addons/{}/start".format(self._addon_slug))
 
     async def async_turn_off(self, **kwargs):
         """Turn the entity off."""
-        await self._hassio.stop_addon(self._addon_slug)
+        await self._hassio.send_command("/addons/{}/stop".format(self._addon_slug))
 
     async def async_update(self):
         """Update the state."""

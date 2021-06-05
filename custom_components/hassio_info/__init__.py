@@ -4,8 +4,6 @@ import logging
 from homeassistant.components.hassio import DOMAIN as HASSIO_DOMAIN
 from homeassistant.helpers.discovery import load_platform
 
-from .handler import extend_hassio
-
 _LOGGER = logging.getLogger(__name__)
 
 DEPENDENCIES = [HASSIO_DOMAIN]
@@ -16,8 +14,6 @@ async def async_setup(hass, config):
     if HASSIO_DOMAIN not in hass.config.components:
         _LOGGER.error("The core Supervisor integration is not set up")
         return False
-
-    extend_hassio(hass.data[HASSIO_DOMAIN])
 
     return True
 
