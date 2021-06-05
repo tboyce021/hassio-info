@@ -80,7 +80,7 @@ class AddonSwitch(SwitchEntity):
 
     async def async_update(self):
         """Update the state."""
-        if not self._hassio.is_connected():
+        if not await self._hassio.is_connected():
             self._state = STATE_UNKNOWN
             return
 
