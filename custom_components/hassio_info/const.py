@@ -2,6 +2,7 @@
 
 DOMAIN = "hassio_info"
 
+TITLE = "Supervisor+"
 ICON = 'mdi:home-assistant'
 
 ATTR_SLUG = "slug"

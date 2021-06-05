@@ -14,7 +14,7 @@ DEPENDENCIES = [HASSIO_DOMAIN]
 async def async_setup(hass, config):
     """Set up the Hassio Info component."""
     if HASSIO_DOMAIN not in hass.config.components:
-        _LOGGER.error("Hassio integration is not set up")
+        _LOGGER.error("The core Supervisor integration is not set up")
         return False
 
     extend_hassio(hass.data[HASSIO_DOMAIN])

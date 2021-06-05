@@ -4,7 +4,7 @@ import logging
 from homeassistant.components.hassio import DOMAIN as HASSIO_DOMAIN
 from homeassistant.config_entries import CONN_CLASS_LOCAL_POLL, ConfigFlow
 
-from .const import DOMAIN
+from .const import DOMAIN, TITLE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,6 +22,6 @@ class HassioInfoFlowHandler(ConfigFlow, domain=DOMAIN):
         if HASSIO_DOMAIN not in self.hass.config.components:
             return self.async_abort(reason="hassio_required")
         if user_input is not None:
-            return self.async_create_entry(title=DOMAIN, data={})
+            return self.async_create_entry(title=TITLE, data={})
 
         return self.async_show_form(step_id="user")

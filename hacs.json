@@ -1,7 +1,6 @@
 {
-  "name": "Hassio Info",
+  "name": "Home Assistant Supervisor+",
   "domains": [
-    "sensor",
     "switch"
   ],
   "render_readme": true,

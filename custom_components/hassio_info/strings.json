@@ -1,6 +1,6 @@
 {
   "config": {
-    "flow_title": "Hassio Info",
+    "flow_title": "Home Assistant Supervisor+",
 	"step": {
       "user": {
         "title": "Confirm set up"
@@ -8,7 +8,7 @@
     },
     "abort": {
       "single_instance_allowed": "[%key:common::config_flow::abort::single_instance_allowed%]",
-	  "hassio_required": "The Hassio integration is not set up"
+	  "hassio_required": "The core Supervisor integration is not set up"
     }
   }
 }
