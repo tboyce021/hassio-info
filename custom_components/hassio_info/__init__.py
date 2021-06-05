@@ -4,7 +4,6 @@ import logging
 from homeassistant.components.hassio import DOMAIN as HASSIO_DOMAIN
 from homeassistant.helpers.discovery import load_platform
 
-from .const import DOMAIN
 from .handler import extend_hassio
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,7 +23,7 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, entry):
     """Set up Hassio Info from a config entry."""
-    for component in "sensor", "switch":
+    for component in ["switch"]:
         hass.async_create_task(
             hass.config_entries.async_forward_entry_setup(entry, component)
         )
@@ -33,7 +32,7 @@ async def async_setup_entry(hass, entry):
 
 async def async_unload_entry(hass, entry):
     """Unload Hassio Info config entry."""
-    for component in "sensor", "switch":
+    for component in ["switch"]:
         await hass.config_entries.async_forward_entry_unload(entry, component)
 
     return True
