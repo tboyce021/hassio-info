@@ -1,7 +1,7 @@
 {
     "domain": "hassio_info",
     "name": "Home Assistant Supervisor+",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "documentation": "https://github.com/tboyce021/hassio-info",
     "issue_tracker": "https://github.com/tboyce021/hassio-info/issues",
     "config_flow": true,
