@@ -1,91 +1,56 @@
 """
 Support for Hassio switches.
 """
-from datetime import timedelta
-import logging
+from __future__ import annotations
 
-from homeassistant.components.hassio import DOMAIN as HASSIO_DOMAIN
-from homeassistant.components.hassio.const import ATTR_ADDONS
+from homeassistant.components.hassio import (
+    async_start_addon,
+    async_stop_addon
+)
+from homeassistant.components.hassio.entity import HassioAddonEntity
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.const import (
-    ATTR_NAME,
-    ATTR_STATE,
-    STATE_UNAVAILABLE,
-    STATE_UNKNOWN
-)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import ATTR_STATE
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import (
-    ATTR_SLUG,
-    ICON,
-    STATE_NONE,
-    STATE_STARTED
-)
-
-_LOGGER = logging.getLogger(__name__)
-
-SCAN_INTERVAL = timedelta(seconds=10)
-PARALLEL_UPDATES = 1
+from . import ADDONS_COORDINATOR
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up Hassio Info switch based on a config entry."""
-    hassio = hass.data[HASSIO_DOMAIN]
-
-    info = await hassio.get_supervisor_info()
-    addons = info[ATTR_ADDONS]
-
-    switches = []
-    for addon in addons:
-        switches.append(AddonSwitch(hassio, addon))
-
-    async_add_entities(switches, True)
+STATE_STARTED = "started"
 
 
-class AddonSwitch(SwitchEntity):
-    """Representation of an Addon switch."""
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Switch set up for Hass.io config entry."""
+    coordinator = hass.data[ADDONS_COORDINATOR]
 
-    def __init__(self, hassio, addon):
-        self._hassio = hassio
-        self._addon_slug = addon[ATTR_SLUG]
-        self._name = addon[ATTR_NAME]
-        self._state = STATE_UNKNOWN
+    entities = [
+        HassioInfoAddonSwitch(
+            coordinator, addon, ATTR_STATE, "State"
+        )
+        for addon in coordinator.data["addons"].values()
+    ]
+    async_add_entities(entities, True)
+
+
+class HassioInfoAddonSwitch(HassioAddonEntity, SwitchEntity):
+    """Switch to turn on/off a Hass.io add-on."""
 
     @property
-    def icon(self):
-        """Return the icon to use in the frontend, if any."""
-        return ICON
-
-    @property
-    def name(self):
-        """Return the name of the device."""
-        return self._name
-
-    @property
-    def is_on(self):
-        """Return the boolean response if switch is on."""
-        return bool(self._state == STATE_STARTED)
-
-    @property
-    def unique_id(self):
-        """Return a unique ID for the device."""
-        return self._addon_slug
+    def is_on(self) -> bool:
+        """Return true if switch is on."""
+        return bool(self.addon_info[ATTR_STATE] == STATE_STARTED)
 
     async def async_turn_on(self, **kwargs):
         """Turn the entity on."""
-        await self._hassio.send_command("/addons/{}/start".format(self._addon_slug))
+        await async_start_addon(self.hass, self.addon_slug)
+        await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs):
         """Turn the entity off."""
-        await self._hassio.send_command("/addons/{}/stop".format(self._addon_slug))
-
-    async def async_update(self):
-        """Update the state."""
-        if not await self._hassio.is_connected():
-            self._state = STATE_UNKNOWN
-            return
-
-        info = await self._hassio.get_addon_info(self._addon_slug)
-        if info[ATTR_STATE] is None or info[ATTR_STATE] == STATE_NONE:
-            self._state = STATE_UNAVAILABLE
-        else:
-            self._state = info[ATTR_STATE]
+        await async_stop_addon(self.hass, self.addon_slug)
+        await self.coordinator.async_request_refresh()
