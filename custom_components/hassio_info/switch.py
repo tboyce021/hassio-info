@@ -7,8 +7,9 @@ from homeassistant.components.hassio import (
     async_start_addon,
     async_stop_addon
 )
+from homeassistant.components.hassio.const import DATA_KEY_ADDONS
 from homeassistant.components.hassio.entity import HassioAddonEntity
-from homeassistant.components.switch import SwitchEntity
+from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_STATE
 from homeassistant.core import HomeAssistant
@@ -18,6 +19,11 @@ from . import ADDONS_COORDINATOR
 
 
 STATE_STARTED = "started"
+
+SWITCH_DESCRIPTION_ADDON_STATE = SwitchEntityDescription(
+    key=ATTR_STATE,
+    name="State",
+)
 
 
 async def async_setup_entry(
@@ -30,7 +36,7 @@ async def async_setup_entry(
 
     entities = [
         HassioInfoAddonSwitch(
-            coordinator, addon, ATTR_STATE, "State"
+            coordinator, SWITCH_DESCRIPTION_ADDON_STATE, addon
         )
         for addon in coordinator.data["addons"].values()
     ]
@@ -43,7 +49,8 @@ class HassioInfoAddonSwitch(HassioAddonEntity, SwitchEntity):
     @property
     def is_on(self) -> bool:
         """Return true if switch is on."""
-        return bool(self.addon_info[ATTR_STATE] == STATE_STARTED)
+        return bool(self.coordinator.data[DATA_KEY_ADDONS][self._addon_slug][
+            self.entity_description.key] == STATE_STARTED)
 
     async def async_turn_on(self, **kwargs):
         """Turn the entity on."""
