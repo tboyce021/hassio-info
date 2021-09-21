@@ -4,6 +4,6 @@
     "switch"
   ],
   "render_readme": true,
-  "homeassistant": "0.117.0",
+  "homeassistant": "2021.9.0",
   "iot_class": ["Local Polling", "Local Push"]
 }
